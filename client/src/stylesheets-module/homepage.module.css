@@ -1,0 +1,21 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Serif+Text:ital@0;1&display=swap");
+
+#homepage-form {
+  display: flex;
+  width: 310px;
+  height: auto;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: auto;
+  margin-bottom: 100px;
+  font-family: "DM Serif Text";
+  font-size: 30px;
+}
+
+label {
+  margin-top: 10px;
+}
+
+button {
+  margin-top: 10px;
+}
