@@ -4,9 +4,9 @@ import style from "./stylesheets-module/Login.module.css";
 import { useContext } from "react";
 import { LoginContext } from "./AuthContext.jsx";
 
-function Login() {
+export default function Login() {
   const navigate = useNavigate();
-
+  const [wrongCredentials, setWrongCredentials] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const auth = useContext(LoginContext);
@@ -29,6 +29,7 @@ function Login() {
           navigate("/homepage");
         } else {
           console.log("non sei loggato bro");
+          setWrongCredentials(true);
         }
       });
   }
@@ -36,7 +37,7 @@ function Login() {
     <>
       <h1>login</h1>
       <div id={style["login-container"]}>
-        <form id={"login-box"}>
+        <form id={style["login-box"]}>
           <label htmlFor="user-input">username</label>
           <input
             type="text"
@@ -71,10 +72,13 @@ function Login() {
           <Link to="/signup">
             <h2 id={style["login-signup-heading"]}> or signup </h2>
           </Link>
+          {wrongCredentials && (
+            <h1 id={style.wrongCredentials}>
+              hai sbagliato username o password
+            </h1>
+          )}
         </form>
       </div>
     </>
   );
 }
-
-export default Login;

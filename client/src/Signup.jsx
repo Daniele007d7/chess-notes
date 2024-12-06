@@ -1,32 +1,38 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import style from "./stylesheets-module/Login.module.css";
 
-function Login() {
+export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-
+  const navigate = useNavigate();
   function handleSubmition(e) {
     fetch("/api/signup", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ username: username, password: password }),
+      body: JSON.stringify({
+        username: username,
+        password: password,
+      }),
     })
       .then((response) => response.json())
-      .then((data) => console.log("questi sono i dati del signup ", data));
+      .then((data) => {
+        console.log("questi sono i dati del signup ", data);
+        navigate("/login");
+      });
   }
   return (
     <>
       <h1>{"sign up"}</h1>
-      <div id="login-container">
-        <form id="login-box">
+      <div id={style["login-container"]}>
+        <form id={style["login-box"]}>
           <label htmlFor="user-input">username</label>
           <input
             type="text"
             id="user-input"
-            className="login-input"
+            className={style["login-input"]}
             onChange={(e) => {
               setUsername(e.target.value);
             }}
@@ -36,18 +42,17 @@ function Login() {
           <input
             type="password"
             id="user-password"
-            className="login-input"
+            className={style["login-input"]}
             onChange={(e) => {
               setPassword(e.target.value);
             }}
           />
-          <div id="button-container">
+          <div id={style["button-container"]}>
             <Link to="/homepage">
               <button
                 onClick={(e) => {
                   handleSubmition(e);
                 }}
-                id="submit-button"
               >
                 submit
               </button>
@@ -55,12 +60,10 @@ function Login() {
           </div>
 
           <Link to="/login">
-            <h2> or login </h2>
+            <h2 id={style["login-signup-heading"]}> or login </h2>
           </Link>
         </form>
       </div>
     </>
   );
 }
-
-export default Login;

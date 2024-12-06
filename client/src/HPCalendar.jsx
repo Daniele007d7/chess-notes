@@ -1,29 +1,36 @@
 import Calendar from "react-calendar";
-import { useState } from "react";
-import "react-calendar/dist/Calendar.css";
+import { useState, useEffect } from "react";
+import "./stylesheets-module/calendar.css";
 import style from "./stylesheets-module/HPCalendar.module.css";
 
-export default function HomeCalendar() {
-  const [value, setValue] = useState(new Date());
+export default function HomeCalendar({
+  date,
+  increaseDate,
+  decreaseDate,
+  handleDateChange,
+  setShowCalendar,
+  showCalendar,
+}) {
+  const month = date.toLocaleString("default", { month: "long" });
+  const [highlightDays, setHighlightDays] = useState([]);
+  useEffect(() => {
+    fetch("/api/calendar")
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("data", data);
+        setHighlightDays(data);
+      });
+  }, []);
 
-  const month = value.toLocaleString("default", { month: "long" });
-  console.log(month);
+  useEffect(() => {
+    const days = highlightDays.map((day) => {
+      return new Date(day.responseDate);
+    });
+  }, [highlightDays]);
 
-  const [showCalendar, setShowCalendar] = useState(false);
-
-  function increaseDate() {
-    setValue(new Date(value.setDate(value.getDate() + 1)));
-  }
-
-  function decreaseDate() {
-    setValue(new Date(value.setDate(value.getDate() - 1)));
-  }
-
-  function handleDateChange(selectedDay) {
-    setValue(selectedDay);
-    setShowCalendar(false);
-  }
-
+  /*   if (highlightDays.length === 0) {
+    return <h1>sta caricando</h1>;
+  } */
   return (
     <div className={`${style.date}`}>
       <div id={style["calendar-container"]}>
@@ -36,9 +43,9 @@ export default function HomeCalendar() {
         </button>
 
         <h2 id={style["h2data"]} onClick={() => setShowCalendar(!showCalendar)}>
-          {value.getDate()}
+          {date.getDate()}
           {" " + month}
-          {" " + value.getFullYear()}
+          {" " + date.getFullYear()}
         </h2>
         <button
           type="button"
@@ -49,7 +56,24 @@ export default function HomeCalendar() {
         </button>
       </div>
 
-      {showCalendar && <Calendar onChange={handleDateChange} value={value} />}
+      {showCalendar && (
+        <Calendar
+          onChange={handleDateChange}
+          date={date}
+          tileClassName={({ date, view }) => {
+            const isHighlighted = highlightDays.some((day) => {
+              if (
+                new Date(day.responseDate).toDateString() ===
+                new Date(date).toDateString()
+              ) {
+                return true;
+              } else return null;
+            });
+
+            return isHighlighted ? "highlight" : null;
+          }}
+        />
+      )}
     </div>
   );
 }
